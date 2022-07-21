@@ -318,11 +318,154 @@ FROM
 WHERE
     officeCode IN(1,2,3)
 ORDER BY
-    firstName;
+    officeCode;
+
+.....................................
+-- LIMIT
+SELECT
+    customerNumber,
+    customerName,
+    creditLimit
+FROM
+    customers
+ORDER BY creditLimit DESC
+LIMIT 5;
 
 
+SELECT
+    customerNumber,
+    customerName,
+    creditLimit
+FROM
+    customers
+ORDER BY creditLimit ASC
+LIMIT 6;
+
+SELECT
+    customerNumber,
+    customerName,
+    creditLimit
+FROM
+    customers
+ORDER BY creditLimit DESC,customerNumber
+LIMIT 6;
+
+...................
+-- paging query
+SELECT
+    customerName,
+    customerNumber
+FROM
+    customers
+ORDER BY
+    customerName
+LIMIT
+    10;
+    -- LIMIT 20,10;
+.................................
+-- DISTINCT
+SELECT DISTINCT
+    state
+FROM customers;
+
+................................
+
+SELECT
+    CONCAT_ws(',',firstName,lastName) AS FULLNAME
+FROM
+    employees;
+..............................
+SELECT
+    quantityOrdered * priceEach AS total 
+FROM
+    orderdetails
+ORDER BY
+    total<4000
+LIMIT 5;
+
+SELECT
+    orderNumber `orderno`,
+    SUM(quantityOrdered * priceEach) subtotal 
+FROM
+    orderdetails
+GROUP BY
+        `orderno`
+HAVING
+    subtotal > 60000;
+.......................................
+
+-- joins
+-- SELECT Orders.OrderID, Customers.CustomerName, Orders.OrderDate
+-- FROM Orders
+-- INNER JOIN Customers ON Orders.CustomerID=Customers.CustomerID;
 
 
+SELECT employees.employeeNumber
+FROM employees
+INNER JOIN offices ON employees.officeCode=offices.officeCode;
 
 
+SELECT orders.orderDate,customers.customerName
+FROM orders
+INNER JOIN customers ON orders.customerNumber=customers.customerNumber;
 
+SELECT orders.orderDate,customers.customerName
+FROM orders
+LEFT JOIN customers ON orders.customerNumber=customers.customerNumber;
+
+SELECT orders.orderDate,customers.customerName
+FROM customers
+RIGHT JOIN orders ON orders.customerNumber=customers.customerNumber;
+
+SELECT orders.orderDate,customers.customerName
+FROM customers
+CROSS JOIN orders ON orders.customerNumber=customers.customerNumber;
+..........................................................
+
+-- to get the whole org str , you can join the employess table to itself using the employmeNumber and reportsTo the columns
+-- the table employees has two roles:one is the Manager and other is Direct Reports
+
+SELECT 
+    CONCAT(m.lastName,',',m.firstName) AS Manager,
+    CONCAT(e.lastName,',',e.firstName) AS 'Direct report'
+FROM 
+    employees e
+INNER JOIN employees m ON
+    m.employeeNumber=e.reportsTo
+
+ORDER BY
+    Manager;
+    ..............................................
+
+    create table project(id INT,name VARCHAR(45));
+    INSERT INTO project VALUES(1,"java"),(2,"html")
+
+    create table user(id INT,media_id INT,name VARCHAR(45));
+    INSERT INTO user
+     VALUES(1,121,"AMRITA"),
+     (1,122,"ANAMIKA"),
+     (1,123,"DIVYA"),
+     (1,124,"ANISH");
+
+     CREATE TABLE project_has_user(project_id INT,user_id INT,manager TINYINT(1),FOREIGN KEY (project_id) REFERENCES
+     project(id),FOREIGN KEY (user_id) REFERENCES user(id));
+     INSERT INTO project_has_user 
+     VALUES(1,121,0001),
+     (2,122,0002),
+     (3,123,0003),
+     (4,124,0004);
+
+     CREATE TABLE bug(id INT,project_id INT,name VARCHAR(45) ,FOREIGN KEY(project_id) REFERENCES project(id));
+     INSERT INTO bug VALUES(1,1,"ARRAY OUT OF BOUND"),
+     (2,2,"EOF"),
+     (3,3,"ARRAY OUT OF BOUND"),
+     (4,4,"EXCEPTION");
+
+     CREATE TABLE comment(id INT,bug_project_id INT,bug_id INT,text TEXT,FOREIGN KEY(bug_id) REFERENCES bug(id));
+     INSERT INTO comment VALUES(1,080,1,"improve"),
+     (1,081,2,"rebuild project"),
+     (1,082,3,"improve"),
+     (1,083,4,"improve"),
+
+     CREATE TABLE bug_has_media(bug _id INT,bug_project_id INT,media_id INT,FOREIGN KEY(bug_project_id) REFERENCES bug(project_id));
+     INSERT INTO bug_has_media VALUES() 
